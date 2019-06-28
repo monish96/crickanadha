@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 const express = require("express");
 const bodyParser = require("body-parser");
 const detailsSchema = require("./data");
-const API_PORT = 3001;
+const API_PORT = 8888;
 const app = express();
 const router = express.Router();
 const env = 'localhost:3000'
@@ -15,6 +15,11 @@ db.once("open", () => console.log("connected to the database"));
 db.on("error", console.error.bind(console, "MongoDB connection error:"));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
+app.use(function(req, res, next) {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    next();
+  });
 router.get("/getData", (req, res) => {
     detailsSchema.find((err, data) => {
         if (err) {
@@ -25,6 +30,9 @@ router.get("/getData", (req, res) => {
     });
 });
 
+app.get("/", (req, res) => {
+    res.send('ok')
+});
 router.get("/getOneData", (req, res) => {
     detailsSchema.find((err, data) => {
         if (err) {
